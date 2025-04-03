@@ -11,14 +11,39 @@ provider "aws" {
   region = "us-west-2"
 }
 
-locals {
-  instance_type = "t3.medium"
+variable "cluster_config_file" {
+  default = "manifest.json"
 }
+
+locals {
+  cluster_config        = jsondecode(file(var.cluster_config_file))
+  WORKER_COUNT          = local.cluster_config.worker_nodes.count
+  CONTROL_PLANE_COUNT   = local.cluster_config.control_plane.count
+  WORKER_INSTANCE_TYPE  = local.cluster_config.worker_nodes.instance_type
+  CONTROL_PLANE_INSTANCE_TYPE = local.cluster_config.control_plane.instance_type
+}
+
+output "WORKER_COUNT" {
+  value = local.WORKER_COUNT
+}
+
+output "CONTROL_PLANE_COUNT" {
+  value = local.CONTROL_PLANE_COUNT
+}
+
+output "WORKER_INSTANCE_TYPE" {
+  value = local.WORKER_INSTANCE_TYPE
+}
+
+output "CONTROL_PLANE_INSTANCE_TYPE" {
+  value = local.CONTROL_PLANE_INSTANCE_TYPE
+}
+
 
 resource "aws_instance" "control_plane" {
   ami           = "ami-05d38da78ce859165"
-  instance_type = local.instance_type
-  count         = var.CONTROL_PLANE_COUNT
+  instance_type = local.CONTROL_PLANE_INSTANCE_TYPE
+  count         = local.CONTROL_PLANE_COUNT
   key_name      = "monithor"
   tags = {
     Name     = "monithor_control_plane"
@@ -32,8 +57,8 @@ resource "aws_instance" "control_plane" {
 
 resource "aws_instance" "worker" {
   ami           = "ami-05d38da78ce859165"
-  instance_type = local.instance_type
-  count         = var.WORKER_COUNT
+  instance_type = local.WORKER_INSTANCE_TYPE
+  count         = local.WORKER_COUNT
   key_name      = "monithor"
 
   tags = {  
