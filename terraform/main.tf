@@ -41,10 +41,10 @@ output "CONTROL_PLANE_INSTANCE_TYPE" {
 
 
 resource "aws_instance" "control_plane" {
-  ami           = "ami-05d38da78ce859165"
+  ami           = var.ami
   instance_type = local.CONTROL_PLANE_INSTANCE_TYPE
   count         = local.CONTROL_PLANE_COUNT
-  key_name      = "monithor"
+  key_name      = var.key_name
   tags = {
     Name     = "monithor_control_plane"
     k8s_role = "monithor_control_plane"
@@ -56,10 +56,10 @@ resource "aws_instance" "control_plane" {
 }
 
 resource "aws_instance" "worker" {
-  ami           = "ami-05d38da78ce859165"
+  ami           = var.ami
   instance_type = local.WORKER_INSTANCE_TYPE
   count         = local.WORKER_COUNT
-  key_name      = "monithor"
+  key_name      = var.key_name
 
   tags = {  
     Name     = "monithor_worker_${count.index + 1}"
