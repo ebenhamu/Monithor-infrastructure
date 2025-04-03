@@ -1,7 +1,7 @@
 aws_region             = "us-west-2"
 ami                    = "ami-05d38da78ce859165" 
 instance_type          = "t2.micro"
-key_name               = "elib.pem" # Change your key name here  , place in tf folder  
+key_name               = "elikey.pem" # Change your key name here  , place in tf folder  
 key_path               = "./" 
 security_group_id      = "sg-021e40666516cbc6e"
 subnet_ids             = ["subnet-0977131910eb1f448","subnet-0aaa87b676722e3e2"]
