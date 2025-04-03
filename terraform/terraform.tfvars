@@ -7,5 +7,3 @@ security_group_id      = "sg-02b3d29bdcd49a0cc"
 subnet_ids             = ["subnet-06d26c27601fa5b42", "subnet-07100b1f42a85f126"]
 vpc_id                 = "vpc-0965807a75a0a2d42"   
 ssh_user               = "ubuntu"
-WORKER_COUNT           = ""
-CONTROL_PLANE_COUNT    = ""
