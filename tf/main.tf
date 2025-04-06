@@ -21,6 +21,7 @@ locals {
   CONTROL_PLANE_COUNT   = local.cluster_config.control_plane.count
   WORKER_INSTANCE_TYPE  = local.cluster_config.worker_nodes.instance_type
   CONTROL_PLANE_INSTANCE_TYPE = local.cluster_config.control_plane.instance_type
+  CLUSTER_NAME           = local.cluster_config.cluster_Name
 }
 
 output "WORKER_COUNT" {
@@ -46,8 +47,8 @@ resource "aws_instance" "control_plane" {
   count         = local.CONTROL_PLANE_COUNT
   key_name      = var.key_name
   tags = {
-    Name     = "monithor_control_plane"
-    k8s_role = "monithor_control_plane"
+    Name     = "${local.CLUSTER_NAME}__control_plane"
+    k8s_role = "${local.CLUSTER_NAME}__control_plane"
   }
     root_block_device {
     volume_size = 10  # Set the root disk size to 10GB
@@ -62,8 +63,8 @@ resource "aws_instance" "worker" {
   key_name      = var.key_name
 
   tags = {  
-    Name     = "monithor_worker_${count.index + 1}"
-    k8s_role = "monithor_worker"
+    Name     = "${local.CLUSTER_NAME}__worker_${count.index + 1}"
+    k8s_role = "${local.CLUSTER_NAME}__worker"
   }
     root_block_device {
     volume_size = 10  # Set the root disk size to 10GB
