@@ -94,6 +94,34 @@ EOF
 
 
 
+resource "local_file" "ansible_inventory" {
+  content = templatefile("${path.module}/../ansible/inventory.yaml.tpl", {
+    control_plane_private_ips = join("\n", aws_instance.control_plane.*.private_ip)
+    control_plane_public_ips  = join("\n", aws_instance.control_plane.*.public_ip)
+    worker_private_ips        = join("\n", aws_instance.worker.*.private_ip)
+    worker_public_ips         = join("\n", aws_instance.worker.*.public_ip)
+    key_name        = "${var.key_path}/${var.key_name}.pem"
+    ssh_user        = var.ssh_user
+  })
+  filename = "${path.module}/../ansible/inventory.yaml"
+}
+
+resource "local_file" "ansible_cfg" {
+  content = templatefile("${path.module}/../ansible/ansible.cfg.tpl", {
+    inventory_file   = "${path.module}/../ansible/inventory.yaml"
+    remote_user      = var.ssh_user
+    private_key_file = "${var.key_path}${var.key_name}.pem"
+    host_key_checking = false
+  })
+  filename = "${path.module}/../ansible/ansible.cfg"
+}
+
+
+
+
+
+
+
 output "public_ips" {
   value = {
     control_plane = aws_instance.control_plane.*.public_ip
