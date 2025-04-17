@@ -13,7 +13,7 @@ all:
       hosts:
     %{ for i, ip_pair in worker_node_ips ~}
         worker_${i + 1}:
-          ${worker_name_prefix}_${i}_private: ${ip_pair.private}
-          ${worker_name_prefix}_${i}_public: ${ip_pair.public}
+          ${worker_name_prefix}_${i+1}_private: ${ip_pair.private}
+          ${worker_name_prefix}_${i+1}_public: ${ip_pair.public}
     %{ endfor ~}
 
