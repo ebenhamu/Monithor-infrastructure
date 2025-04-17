@@ -130,14 +130,14 @@ resource "local_file" "ansible_cfg" {
 
 output "public_ips" {
   value = {
-    ${local.CLUSTER_NAME}_control_plane_public = aws_instance.control_plane.*.public_ip
+    "${local.CLUSTER_NAME}_control_plane_public" = aws_instance.control_plane.*.public_ip
     workers       = { for i, worker in aws_instance.worker : "${local.CLUSTER_NAME}_worker_${i + 1}_public" => worker.public_ip }
   }
 }
 
 output "private_ips" {
   value = {
-    ${local.CLUSTER_NAME}_control_plane_private = aws_instance.control_plane.*.private_ip
+    "${local.CLUSTER_NAME}_control_plane_private" = aws_instance.control_plane.*.private_ip
     workers       = { for i, worker in aws_instance.worker : "${local.CLUSTER_NAME}_worker_${i + 1}_private" => worker.private_ip }
   }
 }
