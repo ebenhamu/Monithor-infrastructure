@@ -46,8 +46,8 @@ resource "aws_instance" "control_plane" {
   count         = local.CONTROL_PLANE_COUNT
   key_name      = var.key_name
   tags = {
-    Name     = "${local.CLUSTER_NAME}__control_plane"
-    k8s_role = "${local.CLUSTER_NAME}__control_plane"
+    Name     = "${local.CLUSTER_NAME}_control_plane"
+    k8s_role = "${local.CLUSTER_NAME}_control_plane"
   }
   root_block_device {
     volume_size = 10  # Set the root disk size to 10GB
@@ -61,8 +61,8 @@ resource "aws_instance" "worker" {
   count         = local.WORKER_COUNT
   key_name      = var.key_name
   tags = {  
-    Name     = "${local.CLUSTER_NAME}__worker_${count.index + 1}"
-    k8s_role = "${local.CLUSTER_NAME}__worker"
+    Name     = "${local.CLUSTER_NAME}_worker_${count.index + 1}"
+    k8s_role = "${local.CLUSTER_NAME}_worker"
   }
   root_block_device {
     volume_size = 10  # Set the root disk size to 10GB
@@ -73,13 +73,25 @@ resource "aws_instance" "worker" {
 resource "local_file" "ansible_inventory" {
   filename = "inventory.ini"
   content = <<EOF
+[Private IP]
 [control_plane]
-${join("\n", [for cp in aws_instance.control_plane : "${local.CLUSTER_NAME}__control_plane=${cp.private_ip}"])}
+${join("\n", [for cp in aws_instance.control_plane : "${local.CLUSTER_NAME}_control_plane=${cp.private_ip}"])}
 
 [workers]
-${join("\n", [for i, worker in aws_instance.worker : "worker_${i + 1}=${worker.private_ip}"])}
+${join("\n", [for i, worker in aws_instance.worker : "${local.CLUSTER_NAME}_worker_${i + 1}=${worker.private_ip}"])}
+
+[Public IP]
+[control_plane]
+${join("\n", [for cp in aws_instance.control_plane :  ${local.CLUSTER_NAME}_control_plane_public=${cp.public_ip}"])}
+
+[workers]
+${join("\n", [for i, worker in aws_instance.worker :  ${local.CLUSTER_NAME}_worker_${i + 1}_public=${worker.public_ip}"])}
+
 EOF
 }
+
+
+
 
 output "public_ips" {
   value = {
