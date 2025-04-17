@@ -96,12 +96,16 @@ EOF
 
 resource "local_file" "ansible_inventory" {
   content = templatefile("${path.module}/../ansible/inventory.yaml.tpl", {
-    control_plane_private_ips = join("\n", aws_instance.control_plane.*.private_ip)
-    control_plane_public_ips  = join("\n", aws_instance.control_plane.*.public_ip)
-    worker_private_ips        = join("\n", aws_instance.worker.*.private_ip)
-    worker_public_ips         = join("\n", aws_instance.worker.*.public_ip)
-    key_name        = "${var.key_path}/${var.key_name}.pem"
-    ssh_user        = var.ssh_user
+    control_plane_private_ips = join(",", aws_instance.control_plane.*.private_ip)
+    control_plane_public_ips  = join(",", aws_instance.control_plane.*.public_ip)
+    worker_node_ips           = [
+      for worker in aws_instance.worker : {
+        private = worker.private_ip,
+        public  = worker.public_ip
+      }
+    ]
+    key_name = "${var.key_path}/${var.key_name}.pem"
+    ssh_user = var.ssh_user
   })
   filename = "${path.module}/../ansible/inventory.yaml"
 }
