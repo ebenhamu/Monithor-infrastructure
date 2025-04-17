@@ -7,12 +7,13 @@ all:
     control_plane:
       hosts:
         control_plane:
-          ansible_host_private: ${control_plane_private_ips}
-          ansible_host_public: ${control_plane_public_ips}
+          ${control_plane_name_prefix}_private: ${control_plane_private_ips}
+          ${control_plane_name_prefix}_public: ${control_plane_public_ips}
     workers:
       hosts:
     %{ for i, ip_pair in worker_node_ips ~}
         worker_${i + 1}:
-          ansible_host_private: ${ip_pair.private}
-          ansible_host_public: ${ip_pair.public}
+          ${worker_name_prefix}_${i}_private: ${ip_pair.private}
+          ${worker_name_prefix}_${i}_public: ${ip_pair.public}
     %{ endfor ~}
+

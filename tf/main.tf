@@ -98,6 +98,8 @@ resource "local_file" "ansible_inventory" {
   content = templatefile("${path.module}/../ansible/inventory.yaml.tpl", {
     control_plane_private_ips = join(",", aws_instance.control_plane.*.private_ip)
     control_plane_public_ips  = join(",", aws_instance.control_plane.*.public_ip)
+    worker_name_prefix= "${local.CLUSTER_NAME}_worker_"
+    control_plane_name_prefix= "${local.CLUSTER_NAME}_control_plane_"
     worker_node_ips           = [
       for worker in aws_instance.worker : {
         private = worker.private_ip,
