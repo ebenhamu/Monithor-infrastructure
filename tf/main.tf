@@ -72,6 +72,19 @@ resource "aws_instance" "worker" {
   }
 }
 
+
+resource "local_file" "ansible_inventory" {
+  filename = "inventory.ini"
+  content = <<EOF
+[control_plane]
+${join("\n", aws_instance.control_plane.*.private_ip)}
+
+[workers]
+${join("\n", [for i, worker in aws_instance.worker : "worker_${i + 1} ansible_host=${worker.private_ip}"])}
+EOF
+}
+
+
 output "public_ips" {
   value = {
     control_pane = aws_instance.control_plane.*.public_ip
