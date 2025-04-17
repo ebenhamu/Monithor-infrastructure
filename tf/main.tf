@@ -82,13 +82,14 @@ ${join("\n", [for i, worker in aws_instance.worker : "${local.CLUSTER_NAME}_work
 
 [Public IP]
 [control_plane]
-${join("\n", [for cp in aws_instance.control_plane :  ${local.CLUSTER_NAME}_control_plane_public=${cp.public_ip}"])}
+${join("\n", [for cp in aws_instance.control_plane : "${local.CLUSTER_NAME}_control_plane_public=${cp.public_ip}"])}
 
 [workers]
-${join("\n", [for i, worker in aws_instance.worker :  ${local.CLUSTER_NAME}_worker_${i + 1}_public=${worker.public_ip}"])}
+${join("\n", [for i, worker in aws_instance.worker : "${local.CLUSTER_NAME}_worker_${i + 1}_public=${worker.public_ip}"])}
 
 EOF
 }
+
 
 
 
