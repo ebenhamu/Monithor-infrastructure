@@ -70,7 +70,7 @@ resource "aws_instance" "worker" {
   }
 }
 
-resource "local_file" "ansible_inventory" {
+resource "local_file" "ansible_inventory_ini" {
   filename = "inventory.ini"
   content = <<EOF
 [Private IP]
